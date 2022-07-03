@@ -29,13 +29,13 @@ class User(AbstractUser):
     job_start_date= models.DateField(auto_now_add=True)
     last_login = models.DateTimeField(auto_now = True)
     tel1=models.CharField(max_length=200)
-    tel2=models.CharField(max_length=200, null=True)
-    sv_image=models.ImageField(upload_to="media/account/%Y/%m/%d/", null=True, validators=[file_size, FileExtensionValidator(['png', 'jpeg', 'jpg'])])
-    company=models.ForeignKey("company.Company", on_delete=models.SET_NULL, related_name="users", null=True)
-    office=models.ForeignKey("company.Office", on_delete=models.SET_NULL, related_name="users", null=True)
-    department=models.ForeignKey("company.Department", on_delete=models.SET_NULL, related_name="users", null=True)
-    position = models.ForeignKey("company.Position", on_delete=models.SET_NULL, related_name="users", null=True)
-    electronic_signature = models.ImageField(upload_to="media/account/%Y/%m/%d/", null=True, validators=[file_size, FileExtensionValidator(['png', 'jpeg', 'jpg'])])
+    tel2=models.CharField(max_length=200, null=True, blank=True)
+    id_card_image=models.ImageField(upload_to="media/account/%Y/%m/%d/", null=True, blank=True, validators=[file_size, FileExtensionValidator(['png', 'jpeg', 'jpg'])])
+    company=models.ForeignKey("company.Company", on_delete=models.SET_NULL, related_name="users", null=True, blank=True)
+    office=models.ForeignKey("company.Office", on_delete=models.SET_NULL, related_name="users", null=True, blank=True)
+    department=models.ForeignKey("company.Department", on_delete=models.SET_NULL, related_name="users", null=True, blank=True)
+    position = models.ForeignKey("company.Position", on_delete=models.SET_NULL, related_name="users", null=True, blank=True)
+    electronic_signature = models.ImageField(upload_to="media/account/%Y/%m/%d/", null=True, blank=True,  validators=[file_size, FileExtensionValidator(['png', 'jpeg', 'jpg'])])
     gender = models.CharField(
         max_length=150,
         choices=GENDER_CHOICES,

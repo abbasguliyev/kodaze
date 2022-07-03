@@ -54,4 +54,4 @@ ARG PROJECT_VERSION
 ENV PROJECT_VERSION="${PROJECT_VERSION}"
   
 # CMD ["gunicorn", "--bind", ":8000", "--workers", "4", "--worker-class"]
-CMD ["gunicorn", "--bind", ":8000", "--workers", "4", "--worker-class", "gevent", "core.wsgi:application"]
+CMD ["gunicorn", "--bind", ":8000", "--workers", "4", "--worker-class", "gevent", "main.wsgi:application"]
