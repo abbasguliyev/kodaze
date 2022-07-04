@@ -56,6 +56,9 @@ class User(AbstractUser):
     date_of_birth= models.DateField(null=True, blank=True)
     job_start_date= models.DateField(auto_now_add=True)
     last_login = models.DateTimeField(auto_now = True)
+
+    contract_start_date = models.DateField(null=True, blank=True)
+    contract_end_date = models.DateField(null=True, blank=True)
     
     tel1=models.CharField(max_length=200)
     tel2=models.CharField(max_length=200, null=True, blank=True)
