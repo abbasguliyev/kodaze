@@ -1,17 +1,13 @@
 from django.contrib import admin
 from account.models import (
     Address,
-
     User, 
     Supervizor,
-    Languages,
-    Skills,
+    UserLanguage,
+    Language,
+    Skill,
     WorkExperiences,
-    UserAddress,
-
     Customer,
-    CustomerAddress,
-
 )
 
 @admin.register(User)
@@ -26,24 +22,20 @@ class CustomerAdmin(admin.ModelAdmin):
 class AddressAdmin(admin.ModelAdmin):
     pass
 
-@admin.register(CustomerAddress)
-class CustomerAddressAdmin(admin.ModelAdmin):
+@admin.register(Language)
+class LanguageAdmin(admin.ModelAdmin):
     pass
 
-@admin.register(Languages)
-class LanguagesAdmin(admin.ModelAdmin):
+@admin.register(UserLanguage)
+class UserLanguageAdmin(admin.ModelAdmin):
     pass
 
-@admin.register(Skills)
-class SkillsAdmin(admin.ModelAdmin):
+@admin.register(Skill)
+class SkillAdmin(admin.ModelAdmin):
     pass
 
 @admin.register(Supervizor)
 class SupervizorAdmin(admin.ModelAdmin):
-    pass
-
-@admin.register(UserAddress)
-class UserAddressAdmin(admin.ModelAdmin):
     pass
 
 @admin.register(WorkExperiences)

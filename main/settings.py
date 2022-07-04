@@ -44,7 +44,7 @@ else:
 # Application definition
 
 INSTALLED_APPS = [
-    # default django
+    # default by django
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -52,9 +52,12 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
 
-    # startapp
+    # created apps
     'account.apps.AccountConfig',
     'company.apps.CompanyConfig',
+    'product.apps.ProductConfig',
+    'warehouse.apps.WarehouseConfig',
+    'crm.apps.CrmConfig',
 ]
 
 MIDDLEWARE = [

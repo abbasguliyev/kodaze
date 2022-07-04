@@ -5,7 +5,17 @@ from django.core.validators import FileExtensionValidator
 from .managers import CustomUserManager
 from main.image_validator import file_size
 
-# Create your models here.
+
+class Address(models.Model):
+    country = models.CharField(max_length=250)
+    city = models.CharField(max_length=250, null=True, blank=True)
+    district = models.CharField(max_length=250, null=True, blank=True)
+    street = models.CharField(max_length=250, null=True, blank=True)
+    postal_code = models.CharField(max_length=300, null=True, blank=True)
+
+    class Meta:
+        ordering = ("-pk",)
+
 class User(AbstractUser):
     HOURLY = "SAATLIQ"
     WEEKLY = "HƏFTƏLİK"
@@ -25,20 +35,59 @@ class User(AbstractUser):
         (FERMALE, "Qadın")
     ]
 
+    FREELANCER = "Xidməti müqavilə"
+    EMPLOYEE = "Əmək müqaviləsi"
+    INTERN = "Təcrübəçi"
+
+    EMPLOYEE_TYPE_CHOICES = [
+        (FREELANCER, "Xidməti müqavilə"),
+        (EMPLOYEE, "Əmək müqaviləsi"),
+        (INTERN, "Təcrübəçi")
+    ]
+
+    MARRIED = "Evli"
+    SINGLE = "Subay"
+
+    MARTIAL_STATUS_CHOICES = [
+        (MARRIED, "Evli"),
+        (SINGLE, "Subay")
+    ]
+
     date_of_birth= models.DateField(null=True, blank=True)
     job_start_date= models.DateField(auto_now_add=True)
     last_login = models.DateTimeField(auto_now = True)
+    
     tel1=models.CharField(max_length=200)
     tel2=models.CharField(max_length=200, null=True, blank=True)
-    id_card_image=models.ImageField(upload_to="media/account/%Y/%m/%d/", null=True, blank=True, validators=[file_size, FileExtensionValidator(['png', 'jpeg', 'jpg'])])
-    company=models.ForeignKey("company.Company", on_delete=models.SET_NULL, related_name="users", null=True, blank=True)
-    office=models.ForeignKey("company.Office", on_delete=models.SET_NULL, related_name="users", null=True, blank=True)
-    department=models.ForeignKey("company.Department", on_delete=models.SET_NULL, related_name="users", null=True, blank=True)
+    work_phone1 = models.CharField(max_length=200, null=True, blank=True)
+    work_phone2 = models.CharField(max_length=200, null=True, blank=True)
+    work_email = models.EmailField(max_length=200, null=True, blank=True)
+
+    address = models.ForeignKey(Address, on_delete=models.CASCADE, related_name="users", null=True, blank=True)
+    
+    profile_image = models.ImageField(upload_to="media/account/%Y/%m/%d/", null=True, blank=True, validators=[file_size, FileExtensionValidator(['png', 'jpeg', 'jpg'])])
+    id_card_image = models.ImageField(upload_to="media/account/%Y/%m/%d/", null=True, blank=True, validators=[file_size, FileExtensionValidator(['png', 'jpeg', 'jpg'])])
+    passport_image = models.ImageField(upload_to="media/account/%Y/%m/%d/", null=True, blank=True, validators=[file_size, FileExtensionValidator(['png', 'jpeg', 'jpg'])])
+    driving_license_image = models.ImageField(upload_to="media/account/%Y/%m/%d/", null=True, blank=True, validators=[file_size, FileExtensionValidator(['png', 'jpeg', 'jpg'])])
+    electronic_signature = models.ImageField(upload_to="media/account/%Y/%m/%d/", null=True, blank=True, validators=[file_size, FileExtensionValidator(['png', 'jpeg', 'jpg'])])
+    
+    company = models.ForeignKey("company.Company", on_delete=models.SET_NULL, related_name="users", null=True, blank=True)
+    office = models.ForeignKey("company.Office", on_delete=models.SET_NULL, related_name="users", null=True, blank=True)
+    department = models.ForeignKey("company.Department", on_delete=models.SET_NULL, related_name="users", null=True, blank=True)
     position = models.ForeignKey("company.Position", on_delete=models.SET_NULL, related_name="users", null=True, blank=True)
-    electronic_signature = models.ImageField(upload_to="media/account/%Y/%m/%d/", null=True, blank=True,  validators=[file_size, FileExtensionValidator(['png', 'jpeg', 'jpg'])])
+
+    family_composition = models.PositiveIntegerField(default=1, null=True, blank=True)
+    speaking_language = models.CharField(max_length=250, null=True, blank=True)
     gender = models.CharField(
         max_length=150,
         choices=GENDER_CHOICES,
+        default=None,
+        null=True,
+        blank=True 
+    )
+    martial_status = models.CharField(
+        max_length=150,
+        choices=MARTIAL_STATUS_CHOICES,
         default=None,
         null=True,
         blank=True 
@@ -49,6 +98,12 @@ class User(AbstractUser):
         default=MONTHLY,
         null=True,
         blank=True
+    )
+    employee_type = models.CharField(
+        max_length=150,
+        choices=EMPLOYEE_TYPE_CHOICES,
+        default=EMPLOYEE,
+        blank=True 
     )
     
     hourly_salary = models.FloatField(default=0)
@@ -74,6 +129,9 @@ class Supervizor(models.Model):
     supervizor = models.ForeignKey(User, on_delete=models.CASCADE, related_name="supervizor")
     users = models.ManyToManyField(User, related_name="supervizor_users")
 
+    class Meta:
+        ordering = ("-pk",)
+
 class WorkExperiences(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="work_experiences")
     title = models.CharField(max_length=200)
@@ -83,15 +141,48 @@ class WorkExperiences(models.Model):
     end_job_date = models.DateField(default=None, null=True, blank=True)
     termination_reason = models.CharField(max_length=500, null=True, blank=True)
 
-class Skills(models.Model):
+    class Meta:
+        ordering = ("pk",)
+
+class Skill(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="skills")
     title = models.CharField(max_length=200)
     knowledge_level = models.CharField(max_length=200)
 
-class Languages(models.Model):
+    class Meta:
+        ordering = ("pk",)
+
+class Language(models.Model):
+    language = models.CharField(max_length=300)
+    
+    class Meta:
+        ordering = ("pk",)
+
+    def __str__(self) -> str:
+        return self.language
+
+class UserEducation(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="educations")
+    high_school = models.CharField(max_length=500, null=True, blank=True)
+    college = models.CharField(max_length=500, null=True, blank=True)
+    university = models.CharField(max_length=500, null=True, blank=True)
+    diploma = models.ImageField(upload_to="media/account/education/%Y/%m/%d/", null=True, blank=True, validators=[file_size, FileExtensionValidator(['png', 'jpeg', 'jpg'])])
+
+    class Meta:
+        ordering = ("pk",)
+
+
+class UserLanguage(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="languages")
-    title = models.CharField(max_length=200)
-    knowledge_level = models.CharField(max_length=200)
+    language = models.ForeignKey(Language, on_delete=models.CASCADE, related_name="users")
+    knowledge_level = models.CharField(max_length=200, null=True, blank=True)
+    speeking = models.BooleanField(default=False, blank=True)
+    listening = models.BooleanField(default=False, blank=True)
+    reading = models.BooleanField(default=False, blank=True)
+    note = models.TextField(null=True, blank=True)
+
+    class Meta:
+        ordering = ("pk",)
 
 class Customer(models.Model):
     MALE = "Kişi"
@@ -118,7 +209,7 @@ class Customer(models.Model):
     tel2 = models.CharField(max_length=50, null=True, blank=True)
     tel3 = models.CharField(max_length=50, null=True, blank=True)
     tel4 = models.CharField(max_length=50, null=True, blank=True)
-    address = models.TextField()
+    address = models.ForeignKey(Address, on_delete=models.CASCADE, related_name="customers")
     id_card_image=models.ImageField(upload_to="media/account/%Y/%m/%d/", null=True, blank=True, validators=[file_size, FileExtensionValidator(['png', 'jpeg', 'jpg'])])
     gender = models.CharField(
         max_length=150,
@@ -140,20 +231,7 @@ class Customer(models.Model):
         ordering = ("-pk",)  
 
     def __str__(self):
-        return f"{self.company_name} {self.first_name} {self.last_name}"
-
-
-class Address(models.Model):
-    country = models.CharField(max_length=250)
-    city = models.CharField(max_length=250, null=True, blank=True)
-    district = models.CharField(max_length=250, null=True, )
-    street = models.CharField(max_length=250, null=True)
-    postal_code = models.CharField(max_length=300, null=True, blank=True)
-
-class UserAddress(models.Model):
-    user = models.OneToOneField(User, on_delete=models.CASCADE, related_name="addresses")
-    address = models.OneToOneField(Address, on_delete=models.CASCADE, related_name="users")
-
-class CustomerAddress(models.Model):
-    customer = models.OneToOneField(Customer, on_delete=models.CASCADE, related_name="addresses")
-    address = models.OneToOneField(Address, on_delete=models.CASCADE, related_name="customer")
+        if self.company_name == None:
+            return f"{self.first_name} {self.last_name}"
+        else:
+            return f"{self.company_name}"
